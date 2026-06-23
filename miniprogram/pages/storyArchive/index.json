@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "story-reader": "../../components/story-reader/index"
+  },
+  "navigationBarTitleText": "往期故事",
+  "navigationStyle": "custom"
+}

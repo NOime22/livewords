@@ -1,0 +1,28 @@
+/* components/ui-card/index.wxss */
+.ui-card {
+  background: var(--bg-card, #ffffff);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--radius-md, 16rpx);
+  padding: 32rpx;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 32rpx;
+  /* Ensure patterns or colors don't leak */
+  overflow: hidden; 
+}
+
+.ui-card.is-full {
+  margin: 0;
+  /* Memphis full cards still keep borders usually, but maybe less radius */
+  border-radius: var(--radius-md); 
+}
+
+.card-header {
+  margin-bottom: 24rpx;
+  color: var(--text-main);
+  font-weight: 800;
+  font-size: var(--font-h2);
+  text-transform: uppercase;
+  letter-spacing: 1rpx;
+  border-bottom: 4rpx solid var(--border-color);
+  padding-bottom: 16rpx;
+}

@@ -1,0 +1,228 @@
+/* pages/welcome/index.wxss */
+.welcome-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  /* Polka Dot Background */
+  background-image: radial-gradient(var(--border-color) 2rpx, transparent 2rpx);
+  background-size: 40rpx 40rpx;
+  background-color: var(--bg-body);
+  padding: 48rpx;
+  box-sizing: border-box;
+}
+
+/* Decorative Backgrounds */
+.deco-circle {
+  position: absolute;
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--border-color);
+  background: var(--secondary); /* Pink */
+  top: -60rpx;
+  right: -60rpx;
+  z-index: 0;
+}
+
+.deco-square {
+  position: absolute;
+  width: 200rpx;
+  height: 200rpx;
+  background: var(--accent); /* Blue */
+  border: 4rpx solid var(--border-color);
+  bottom: 80rpx;
+  left: -40rpx;
+  transform: rotate(15deg);
+  z-index: 0;
+  box-shadow: 12rpx 12rpx 0 var(--border-color);
+}
+
+/* Brand Section */
+.brand-section {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 64rpx;
+}
+
+.logo-box {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 48rpx;
+}
+
+.logo-content {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: transparent;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  border: 4rpx solid var(--border-color);
+}
+
+.logo-shadow {
+  position: absolute;
+  top: 12rpx; left: 12rpx;
+  width: 100%; height: 100%;
+  background: var(--border-color);
+  border-radius: var(--radius-md);
+  z-index: 1;
+}
+
+.title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.0;
+  margin-bottom: 32rpx;
+}
+
+.hero-title {
+  font-size: 112rpx; /* Increased for Chinese characters impact */
+  font-weight: 900;
+  color: var(--text-main);
+  text-shadow: 6rpx 6rpx 0 var(--secondary);
+  letter-spacing: 4rpx;
+}
+
+.hero-title.filled {
+  color: #fff;
+  -webkit-text-stroke: 3rpx var(--border-color);
+}
+
+/* Slogan Sticker (The "Crazy" Part) */
+.slogan-sticker {
+  display: flex;
+  flex-direction: row;
+  gap: 12rpx;
+  background: #fff;
+  padding: 16rpx 32rpx;
+  border: 4rpx solid var(--border-color);
+  box-shadow: 8rpx 8rpx 0 var(--secondary);
+  transform: rotate(-2deg); /* Sticker tilt */
+  margin-top: 16rpx;
+}
+
+.slogan-text {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.slogan-text.highlight {
+  color: #fff;
+  background: var(--text-main); /* Black background for "编得越疯" */
+  padding: 0 8rpx;
+  transform: skewX(-10deg);
+}
+
+/* Feature Stickers */
+.feature-stickers {
+  display: flex;
+  gap: 32rpx;
+  margin-bottom: 80rpx;
+  z-index: 10;
+}
+
+.sticker {
+  background: #fff;
+  border: 4rpx solid var(--border-color);
+  padding: 16rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  box-shadow: 6rpx 6rpx 0 var(--border-color);
+  transition: transform 0.2s;
+}
+
+.sticker-1 { transform: rotate(-5deg); border-radius: 255rpx 15rpx 225rpx 15rpx / 15rpx 225rpx 15rpx 255rpx; }
+.sticker-2 { transform: rotate(3deg); border-radius: 15rpx 225rpx 15rpx 255rpx / 255rpx 15rpx 225rpx 15rpx; background: var(--success); }
+
+.sticker-text { font-weight: 700; font-size: 28rpx; }
+
+/* Actions */
+.action-area {
+  width: 100%;
+  max-width: 500rpx;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+  align-items: center;
+}
+
+.native-btn {
+  width: 100%;
+  background: var(--primary);
+  border: 4rpx solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24rpx 0;
+  font-size: 32rpx;
+  font-weight: 900;
+  color: #000;
+  box-shadow: 8rpx 8rpx 0 var(--border-color);
+}
+.native-btn[disabled] {
+  opacity: 0.6;
+}
+
+.btn-hover {
+  opacity: 0.8;
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-main {
+  font-size: 32rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.auth-hint {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.skip-area {
+  display: flex;
+  justify-content: center;
+}
+
+.skip-link {
+  font-weight: 700;
+  font-size: 28rpx;
+  text-decoration: underline;
+  text-decoration-thickness: 4rpx;
+  text-decoration-color: var(--primary);
+}
+
+.error-sticker {
+  background: var(--secondary);
+  color: #fff;
+  padding: 16rpx;
+  text-align: center;
+  border: 4rpx solid var(--border-color);
+  font-weight: 700;
+  transform: rotate(1deg);
+}

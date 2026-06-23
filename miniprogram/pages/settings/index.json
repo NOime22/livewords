@@ -1,0 +1,10 @@
+{
+  "usingComponents": {
+    "ui-card": "/components/ui-card/index",
+    "ui-button": "/components/ui-button/index"
+  },
+  "navigationBarTitleText": "",
+  "navigationBarBackgroundColor": "#F8F9FA",
+  "navigationBarTextStyle": "black",
+  "navigationStyle": "custom"
+}

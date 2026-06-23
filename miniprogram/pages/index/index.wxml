@@ -1,0 +1,486 @@
+<view class="page">
+  <block wx:if="{{evalModeEnabled}}">
+    <scroll-view scroll-y class="eval-page">
+      <view class="eval-shell" style="padding-top: {{statusBarHeight}}px;">
+        <view class="eval-header">
+          <view class="icon-btn-retro" bindtap="goToSettings">⚙️</view>
+          <view class="eval-header-copy">
+            <text class="eval-title">故事评测台</text>
+            <text class="eval-subtitle">真实连续 run · 固定模型 · 你只负责逐节生成与截图</text>
+          </view>
+          <view class="eval-pill">AI 主导</view>
+        </view>
+
+        <view class="retro-card eval-card">
+          <view class="eval-row">
+            <text class="eval-label">链路模板</text>
+            <picker mode="selector" range="{{evalChains}}" range-key="title" value="{{evalChainIndex}}" bindchange="onEvalChainChange">
+              <view class="eval-picker">{{evalSelectedChain.chainId}} · {{evalSelectedChain.title}}</view>
+            </picker>
+          </view>
+          <view class="eval-row">
+            <text class="eval-label">固定模型</text>
+            <view class="eval-picker eval-picker-readonly">{{evalLockedModelLabel}}</view>
+          </view>
+          <view wx:if="{{evalCurrentRun}}" class="eval-case-brief">
+            <text class="eval-run-line">Run：{{evalCurrentRun.runId}}</text>
+            <text class="eval-run-line">状态：{{evalCurrentRun.status === 'completed' ? '已完成' : '进行中'}} · 已生成 {{evalCurrentRun.historyCount}} / {{evalCurrentRun.totalEpisodes}} 节</text>
+            <text wx:if="{{evalCurrentRun.nextEpisodePlan}}" class="eval-run-line">下一节：Ep{{evalCurrentRun.nextEpisodePlan.episodeIndex}} · {{evalCurrentRun.nextEpisodePlan.goal}}</text>
+          </view>
+          <view class="eval-case-brief">
+            <text class="eval-brief-line">链路目标：{{evalSelectedChain.focus}}</text>
+            <text wx:if="{{evalCurrentEpisodePlan}}" class="eval-brief-line">当前节：Ep{{evalCurrentEpisodePlan.episodeIndex}} · {{evalCurrentEpisodePlan.goal}}</text>
+            <text wx:if="{{evalCurrentEpisodePlan}}" class="eval-brief-line">词卡：{{evalCurrentEpisodePlan.targetWords[0]}} / {{evalCurrentEpisodePlan.targetWords[1]}} / {{evalCurrentEpisodePlan.targetWords[2]}} / {{evalCurrentEpisodePlan.targetWords[3]}} / {{evalCurrentEpisodePlan.targetWords[4]}} / {{evalCurrentEpisodePlan.targetWords[5]}} / {{evalCurrentEpisodePlan.targetWords[6]}} / {{evalCurrentEpisodePlan.targetWords[7]}} / {{evalCurrentEpisodePlan.targetWords[8]}} / {{evalCurrentEpisodePlan.targetWords[9]}}</text>
+          </view>
+          <view class="eval-actions">
+            <button class="eval-primary-btn" loading="{{evalRunning}}" disabled="{{evalRunning}}" bindtap="handleStartEval">
+              {{evalRunning ? '生成中...' : evalPrimaryActionText}}
+            </button>
+          </view>
+          <view wx:if="{{evalError}}" class="eval-error">{{evalError}}</view>
+        </view>
+
+        <view wx:if="{{evalCurrentResult}}" class="retro-card eval-card">
+          <view class="eval-section-title">当前结果</view>
+          <view class="eval-meta">
+            <text class="eval-meta-line">{{evalCurrentResult.chainId}} · Ep{{evalCurrentResult.episodeIndex}} · {{evalCurrentResult.title}}</text>
+            <text class="eval-meta-line">链路目标：{{evalCurrentResult.focus}}</text>
+            <text class="eval-meta-line">本节目标：{{evalCurrentResult.goal}}</text>
+            <text class="eval-meta-line">实发词：{{evalCurrentResult.targetWordsText}}</text>
+            <text wx:if="{{evalCurrentResult.checkpointsText}}" class="eval-meta-line">检查点：{{evalCurrentResult.checkpointsText}}</text>
+          </view>
+
+          <view class="eval-output-block">
+            <text class="eval-output-title">English</text>
+            <view class="eval-output-text">{{evalCurrentResult.paragraph.english}}</view>
+          </view>
+
+          <view class="eval-output-block">
+            <text class="eval-output-title">Mixed</text>
+            <view class="eval-output-text">{{evalCurrentResult.paragraph.mixed}}</view>
+          </view>
+
+          <view class="eval-output-block">
+            <text class="eval-output-title">state</text>
+            <view wx:if="{{evalCurrentResult.state}}" class="eval-state-grid">
+              <text class="eval-state-line">who：{{evalCurrentResult.state.who}}</text>
+              <text class="eval-state-line">where：{{evalCurrentResult.state.where}}</text>
+              <text class="eval-state-line">goal：{{evalCurrentResult.state.goal}}</text>
+              <text class="eval-state-line">obstacle：{{evalCurrentResult.state.obstacle}}</text>
+              <text class="eval-state-line">props：{{evalCurrentResult.state.props}}</text>
+              <text class="eval-state-line">clue：{{evalCurrentResult.state.clue}}</text>
+              <text class="eval-state-line">decision：{{evalCurrentResult.state.decision}}</text>
+              <text class="eval-state-line">hook：{{evalCurrentResult.state.hook}}</text>
+            </view>
+            <view wx:else class="eval-empty-hint">未返回 state</view>
+          </view>
+
+          <view class="eval-output-block">
+            <text class="eval-output-title">promptMeta</text>
+            <view class="eval-state-grid">
+              <text class="eval-state-line">promptVersion：{{evalCurrentResult.promptMeta.promptVersion || '-'}}</text>
+              <text class="eval-state-line">model：{{evalCurrentResult.promptMeta.model || '-'}}</text>
+              <text class="eval-state-line">skillDigest：{{evalCurrentResult.promptMeta.skillsAppliedSha1 || '-'}}</text>
+              <text class="eval-state-line">repaired：{{evalCurrentResult.promptMeta.repaired ? 'true' : 'false'}}</text>
+              <text class="eval-state-line">durationMs：{{evalCurrentResult.promptMeta.durationMs || '-'}}</text>
+            </view>
+          </view>
+          <view class="eval-output-block">
+            <text class="eval-output-title">下一步</text>
+            <view class="eval-operator-note">
+              <text class="eval-state-line">1. 请把本页结果连续截图发给我</text>
+              <text class="eval-state-line">2. 截图必须覆盖 English / Mixed / state / promptMeta</text>
+              <text class="eval-state-line">3. 我会负责逐节评分、记录和判断是否继续下一节</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </block>
+  <block wx:else>
+  <!-- DASHBOARD STATE -->
+  <view class="dashboard-layer anim-fade-in" wx:if="{{!isSessionStarted}}">
+    <!-- Header -->
+    <view class="dash-header" style="padding-top: {{statusBarHeight}}px;">
+      <view class="icon-btn-retro" bindtap="goToSettings">⚙️</view>
+    </view>
+
+    <!-- Bento Grid (Arcade Layout) -->
+    <view class="bento-grid">
+      <!-- HERO: Mission Start -->
+      <view class="hero-box">
+        <view class="hero-stripe"></view>
+        
+        <!-- Story Mode Hero -->
+        <block wx:if="{{activeStory && activeStory.status === 'ongoing'}}">
+          <view class="hero-content story-mode-hero">
+            <view class="mission-goal">
+              <block wx:if="{{dailyMasteredCount == 0}}">
+                <text class="goal-label">今日目标：</text>
+                <text class="goal-badge">{{todayGoal}}</text>
+                <text class="goal-text">个单词</text>
+              </block>
+              <block wx:elif="{{dailyMasteredCount < todayGoal}}">
+                <text class="goal-label">今日目标剩余：</text>
+                <text class="goal-badge">{{todayGoal - dailyMasteredCount}}</text>
+                <text class="goal-text">个单词</text>
+              </block>
+              <block wx:elif="{{dailyMasteredCount == todayGoal}}">
+                <text class="goal-label">今日目标：</text>
+                <text class="goal-text">✅</text>
+              </block>
+              <block wx:else>
+                <text class="goal-label">今日超额完成：</text>
+                <text class="goal-badge">{{dailyMasteredCount - todayGoal}}</text>
+                <text class="goal-text">个单词</text>
+              </block>
+            </view>
+            <view class="mission-status">
+              <!-- Big Theme Title -->
+              <view class="story-hero-title">
+                <text>{{activeStoryTheme.icon}} {{activeStoryTheme.name}}</text>
+              </view>
+
+              <!-- Progress Bar -->
+              <view class="story-progress-bar">
+                <block wx:for="{{7}}" wx:key="index">
+                  <view class="progress-dot {{index < activeStory.currentEpisode ? 'active' : ''}}"></view>
+                </block>
+              </view>
+
+              <!-- Countdown Footer -->
+              <view class="story-countdown">
+                <text>{{remainingDays}}天后断更</text>
+              </view>
+            </view>
+             <view class="hero-actions">
+               <view class="action-btn primary" bindtap="handleStartNew">{{actionButtonText}}</view>
+               <view class="action-btn secondary" bindtap="handleChangeVibe">更换题材</view>
+             </view>
+          </view>
+        </block>
+
+        <!-- Standard Mode Hero -->
+        <block wx:else>
+          <view class="hero-content">
+            <view class="mission-goal">
+              <block wx:if="{{dailyMasteredCount == 0}}">
+                <text class="goal-label">今日目标：</text>
+                <text class="goal-badge">{{todayGoal}}</text>
+                <text class="goal-text">个单词</text>
+              </block>
+              <block wx:elif="{{dailyMasteredCount < todayGoal}}">
+                <text class="goal-label">今日目标剩余：</text>
+                <text class="goal-badge">{{todayGoal - dailyMasteredCount}}</text>
+                <text class="goal-text">个单词</text>
+              </block>
+              <block wx:elif="{{dailyMasteredCount == todayGoal}}">
+                <text class="goal-label">今日目标：</text>
+                <text class="goal-text">✅</text>
+              </block>
+              <block wx:else>
+                <text class="goal-label">今日超额完成：</text>
+                <text class="goal-badge">{{dailyMasteredCount - todayGoal}}</text>
+                <text class="goal-text">个单词</text>
+              </block>
+            </view>
+            <view class="mission-status">
+              <swiper 
+                vertical 
+                circular 
+                current="{{heroTipIndex}}"
+                autoplay="{{false}}" 
+                duration="500" 
+                class="hero-swiper"
+              >
+                <swiper-item wx:for="{{heroTips}}" wx:key="*this">
+                  <view class="hero-tip-item">{{item}}</view>
+                </swiper-item>
+              </swiper>
+            </view>
+             <view class="hero-actions">
+               <view class="action-btn primary" bindtap="handleStartNew">{{actionButtonText}}</view>
+               <view
+                 wx:if="{{storyExpired && storyReviveEligible && !activeStory}}"
+                 class="action-btn secondary {{storyReviveBusy ? 'is-disabled' : ''}}"
+                 bindtap="handleReviveStory"
+               >
+                 {{storyReviveBusy ? '续写中...' : '续写上个故事'}}
+               </view>
+               <!-- Review mode disabled for launch -->
+               <!-- <view class="action-btn secondary" bindtap="handleStartReview">复习</view> -->
+             </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- Row 2 -->
+      <view class="bento-row">
+        <!-- AI Stories Count -->
+        <view class="retro-card stat-card story-stat" bindtap="showStoryHistory">
+          <view class="card-deco-top"></view>
+          <text class="stat-label-top">近30天AI已瞎编</text>
+          <text class="stat-num">{{metrics.createdStories}}</text>
+          <text class="stat-label-bottom">套故事</text>
+        </view>
+
+        <!-- Mastered Word Count -->
+        <view class="retro-card stat-card word-stat" bindtap="openMasteredWords">
+          <view class="card-deco-top"></view>
+          <text class="stat-label-top">你已完全掌握</text>
+          <text class="stat-num">{{metrics.masteredWords}}</text>
+          <text class="stat-label-bottom">个单词</text>
+        </view>
+      </view>
+
+      <!-- Row 3: Deck Selector Button -->
+      <view class="deck-selector-btn" bindtap="showDeckSelector">
+        <view class="deck-selector-content">
+          <view class="deck-selector-icon">📖</view>
+          <view class="deck-selector-info">
+            <text class="deck-selector-name">{{currentDeckName}}</text>
+            <text class="deck-selector-tags">{{currentDeckTags}}</text>
+          </view>
+          <view class="deck-selector-arrow">›</view>
+        </view>
+      </view>
+
+
+    </view>
+  </view>
+
+  <!-- SESSION STATE (Memphis Overlay) -->
+  <view class="session-layer" wx:if="{{isSessionStarted}}">
+    <!-- Minimal Nav: Hide in Story Mode Reader (it has its own header) -->
+     <view class="session-nav" style="top: {{statusBarHeight}}px;" wx:if="{{!(uiState === 'complete' && activeStory)}}">
+       <view class="back-btn-box" bindtap="exitSession">
+         <text>退出</text>
+       </view>
+       <view class="nav-placeholder"></view>
+       <view class="nav-placeholder"></view>
+     </view>
+
+     <view class="cards-zone {{uiState === 'complete' ? 'is-complete' : ''}}">
+        <block wx:if="{{uiState === 'loading'}}">
+          <view class="loading-state">
+            <view class="spinner-retro"></view>
+          </view>
+        </block>
+
+        <block wx:elif="{{uiState === 'error'}}">
+          <view class="error-state">
+            <view class="error-text">{{generationError || '生成失败，请重试'}}</view>
+            <ui-button type="primary" size="large" bind:click="handleGenerate">再试一次</ui-button>
+          </view>
+        </block>
+
+        <block wx:elif="{{currentCard}}">
+          <view class="card-stack">
+            <block wx:for="{{nextCards}}" wx:key="id">
+              <view class="card preview card-index-{{index + 1}}">
+                <view class="card-border-inner"></view>
+              </view>
+            </block>
+
+            <view
+              class="card active {{cardLeaving ? 'leave-' + cardLeaving : ''}} {{isDragging ? 'is-dragging' : ''}}"
+              style="transform: translate3d({{cardOffsetX}}px, {{cardOffsetY}}px, 0) rotate({{cardRotation}}deg);"
+              catchtouchstart="onCardTouchStart"
+              catchtouchmove="onCardTouchMove"
+              catchtouchend="onCardTouchEnd"
+              catchtouchcancel="onCardTouchEnd"
+            >
+              <view class="card-border-inner {{currentCard.densityClass}}">
+                <view class="flex-spacer"></view>
+                <!-- Header: Word & Phonetic -->
+                <view class="card-header">
+                  <!-- Adaptive font size based on word length -->
+                  <text class="big-word" style="font-size: {{currentCard.word.length > 10 ? '64rpx' : (currentCard.word.length > 7 ? '80rpx' : '108rpx')}}">{{currentCard.word}}</text>
+                  <view class="phonetic-row" wx:if="{{currentCard.phonetic}}" data-action="pronunciation">
+                    <text class="phonetic-capsule" data-action="pronunciation">🔊 /{{currentCard.phonetic}}/</text>
+                  </view>
+                </view>
+
+                <view class="flex-spacer"></view>
+
+                <!-- Body: Definitions -->
+                <view class="card-body">
+                  <view class="def-container">
+                    <block wx:if="{{currentCard.cnDefs && currentCard.cnDefs.length > 0}}">
+                      <block wx:for="{{currentCard.cnDefs}}" wx:key="index" wx:for-item="def">
+                        <view class="def-row">
+                          <view class="pos-circle" wx:if="{{def.pos}}">{{def.pos}}</view>
+                          <text class="def-text" wx:if="{{def.meaningsText}}">{{def.meaningsText}}</text>
+                          <text class="def-text" wx:else>{{currentCard.translation}}</text>
+                        </view>
+                      </block>
+                    </block>
+                    <block wx:elif="{{currentCard.translation}}">
+                      <view class="def-row">
+
+                        <text class="def-text">{{currentCard.translation}}</text>
+                      </view>
+                    </block>
+
+                    <!-- Phrases Section (limited to 3) -->
+                    <view class="phrase-section" wx:if="{{currentCard.phrases && currentCard.phrases.length > 0}}">
+                      <block wx:for="{{currentCard.phrases}}" wx:key="index" wx:if="{{index < 3}}">
+                        <view class="phrase-item">{{item}}</view>
+                      </block>
+                    </view>
+                  </view>
+                </view>
+                <view class="flex-spacer"></view>
+              </view>
+            </view>
+          </view>
+        </block>
+        
+        <block wx:elif="{{uiState === 'complete'}}">
+           <!-- Story Mode: Immersive Reader -->
+           <block wx:if="{{activeStory && (activeStory.status === 'ongoing' || activeStory.status === 'completed')}}">
+             <story-reader 
+                id="storyReader"
+                story="{{activeStory}}" 
+                currentEpisode="{{storyDisplayEpisode}}"
+                mode="{{currentParagraphMode}}"
+                currentContent="{{session.paragraph}}"
+                words="{{session.words}}"
+                statusBarHeight="{{statusBarHeight}}"
+                aiFailed="{{aiFailed}}"
+                aiRetrying="{{aiRetrying}}"
+                episodeReady="{{episodeDraftStatus === 'ready'}}"
+                retryDisabled="{{episodeDraftRetryDisabled}}"
+                retryLabel="{{episodeDraftRetryLabel}}"
+                bind:back="handleStoryReturnHome"
+                bind:continue="handleStoryProceed"
+                bind:modeChange="handleParagraphModeChange"
+                bind:finish="handleFinishStoryCycle"
+                bind:retryAi="handleRetryAi"
+             />
+           </block>
+
+           <!-- Story bootstrapping fallback -->
+           <block wx:else>
+             <view class="story-sync-state">
+               <view class="spinner-retro"></view>
+               <text class="story-sync-title">正在恢复故事...</text>
+               <text class="story-sync-hint">本节内容准备好后会直接进入新故事页。</text>
+             </view>
+           </block>
+        </block>
+     </view>
+  </view>
+
+  <!-- Deck Selector Modal -->
+  <view class="modal-overlay" wx:if="{{showDeckSelectModal}}" bindtap="hideDeckSelector">
+    <view class="modal-content deck-modal" catchtap="">
+      <view class="modal-title">选择词库</view>
+      <scroll-view scroll-y class="deck-list">
+        <view 
+          wx:for="{{deckList}}" 
+          wx:key="id" 
+          class="deck-item {{item.id === currentDeckId ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="selectDeck"
+        >
+          <view class="deck-info">
+            <text class="deck-item-name">{{item.name}}</text>
+            <text class="deck-item-tags">{{item.tags}}</text>
+          </view>
+          <text class="deck-status-icon">✓</text>
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-close-btn" bindtap="hideDeckSelector">取消</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Story Vibe Selector Modal -->
+  <view class="modal-overlay vibe-modal-overlay" wx:if="{{showVibeModal}}" bindtap="hideVibeSelector">
+    <view class="modal-content vibe-modal" catchtap="noop">
+      <view class="vibe-list">
+        <view class="vibe-grid">
+          <view
+            wx:for="{{vibeOptions}}" 
+            wx:key="id" 
+            class="vibe-item {{item.id === selectedVibe ? 'active' : ''}}"
+            data-id="{{item.id}}"
+            bindtap="selectVibe"
+            style="--vibe-accent: {{item.accent}}; --vibe-wash: {{item.wash}};"
+          >
+            <view class="vibe-emblem">{{item.icon}}</view>
+            <view class="vibe-copy">
+              <view class="vibe-name">{{item.name}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="vibe-action-bar">
+        <view
+          class="vibe-primary-btn {{selectedVibe ? '' : 'disabled'}} {{startStoryLoading ? 'loading' : ''}}"
+          bindtap="confirmStartStory"
+        >
+          {{startStoryLoading ? '创建中...' : 'VIBE STORY'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Story History Drawer -->
+  <view class="drawer-overlay {{showStoryHistoryDrawer ? 'show' : ''}}" bindtap="closeStoryHistory"></view>
+  <view class="story-drawer {{showStoryHistoryDrawer ? 'show' : ''}}" style="height: {{storyHistoryDrawerHeight}}px;">
+    <view class="drawer-handle"></view>
+    <view class="drawer-header">
+      <text class="drawer-title">往期故事</text>
+      <view class="drawer-close" bindtap="closeStoryHistory">✕</view>
+    </view>
+    <scroll-view class="drawer-scroll" scroll-y>
+      <block wx:if="{{!storyHistoryLoading && storyHistoryGroups.length > 0}}">
+        <view wx:for="{{storyHistoryGroups}}" wx:key="theme" class="story-history-group">
+          <view class="story-history-group-header" bindtap="toggleStoryHistoryGroup" data-theme="{{item.theme}}">
+            <text class="story-history-icon">{{item.themeIcon}}</text>
+            <view class="story-history-info">
+              <text class="story-history-theme">{{item.themeName}}</text>
+              <view class="story-history-group-meta">
+                <text class="story-history-date">最近完成 · {{item.latestFormattedDate}}</text>
+                <text class="story-history-count">{{item.count}}篇</text>
+              </view>
+            </view>
+            <view class="story-history-arrow {{item.expanded ? 'is-expanded' : ''}}">›</view>
+          </view>
+
+          <view wx:if="{{item.expanded}}" class="story-history-children">
+            <view
+              wx:for="{{item.stories}}"
+              wx:key="id"
+              class="story-history-child-item"
+              catchtap="openStoryArchive"
+              data-storyid="{{item.id}}"
+            >
+              <view class="story-history-child-dot"></view>
+              <view class="story-history-child-info">
+                <text class="story-history-child-title">{{item.title || ''}}</text>
+                <text class="story-history-child-date">已完成 · {{item.formattedDate}}</text>
+              </view>
+              <view class="story-history-child-arrow">›</view>
+            </view>
+          </view>
+        </view>
+      </block>
+      <view wx:if="{{storyHistoryLoading}}" class="drawer-loading">
+        <view class="spinner-retro"></view>
+        <text class="loading-text">加载中...</text>
+      </view>
+      <view wx:elif="{{storyHistoryGroups.length === 0 && !storyHistoryLoading}}" class="drawer-empty">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无已完成的故事</text>
+        <text class="empty-sub">完成7天学习周期后将出现在这里</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  </block>
+</view>

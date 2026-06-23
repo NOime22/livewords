@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "story-reader": "/components/story-reader/index",
+    "ui-card": "/components/ui-card/index",
+    "ui-button": "/components/ui-button/index"
+  },
+  "navigationStyle": "custom",
+  "disableScroll": false
+}

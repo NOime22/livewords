@@ -1,0 +1,11 @@
+{
+  "name": "story-data",
+  "version": "1.0.0",
+  "description": "Cloud function for Story Mode logic",
+  "main": "index.js",
+  "dependencies": {
+    "@cloudbase/node-sdk": "3.16.0",
+    "wx-server-sdk": "3.0.4"
+  },
+  "private": true
+}

@@ -1,0 +1,46 @@
+<view class="page welcome-container">
+  <!-- Decorative Elements -->
+  <view class="deco-circle deco-1"></view>
+  <view class="deco-square deco-2"></view>
+  
+  <view class="brand-section">
+     <!-- Logo Area -->
+     <view class="logo-box anim-fade-in">
+        <view class="logo-shadow"></view>
+        <view class="logo-content">
+          <image class="logo-img" src="/images/livewords_icon.png" mode="aspectFit"></image>
+        </view>
+     </view>
+
+     <!-- Title Group -->
+     <view class="title-group anim-fade-in" style="animation-delay: 0.1s;">
+       <text class="hero-title">上头</text>
+       <text class="hero-title filled">单词</text>
+     </view>
+
+     <!-- Slogan Sticker -->
+     <view class="slogan-sticker anim-pop-in" style="animation-delay: 0.3s;">
+        <text class="slogan-text">背得越多</text>
+        <text class="slogan-text highlight">编得越疯</text>
+     </view>
+  </view>
+
+  <!-- Actions -->
+  <view class="action-area anim-fade-in" style="animation-delay: 0.4s;">
+    <button
+      class="login-btn native-btn"
+      bindtap="handleStart"
+      loading="{{isLoading}}"
+      disabled="{{isLoading}}"
+      hover-class="btn-hover"
+      hover-start-time="0"
+      hover-stay-time="80"
+    >
+      <text class="btn-main">开始</text>
+    </button>
+    
+    <view wx:if="{{authFailed}}" class="error-sticker">
+      <text>授权失败，再试一次？</text>
+    </view>
+  </view>
+</view>

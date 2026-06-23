@@ -1,0 +1,59 @@
+.page {
+  width: 100vw;
+  height: 100vh;
+  background: #E6E2D3;
+}
+
+.loading-state,
+.error-state {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+  background: #FFFBF0;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #666;
+  font-family: 'PingFang SC', sans-serif;
+}
+
+.spinner-retro {
+  width: 48rpx;
+  height: 48rpx;
+  border: 6rpx solid #FF6B00;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-icon {
+  font-size: 100rpx;
+}
+
+.error-text {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+  max-width: 500rpx;
+}
+
+.error-btn {
+  margin-top: 16rpx;
+  padding: 16rpx 48rpx;
+  background: #FF6B00;
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 700;
+  border-radius: 8rpx;
+  border: 4rpx solid #181818;
+  box-shadow: 4rpx 4rpx 0 #181818;
+}

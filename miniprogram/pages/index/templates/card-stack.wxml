@@ -1,0 +1,105 @@
+<!-- templates/card-stack.wxml -->
+<view class="cards-zone {{uiState === 'complete' ? 'is-complete' : ''}}">
+    <block wx:if="{{uiState === 'loading'}}">
+        <view class="loading-state">
+        <view class="spinner-retro"></view>
+        </view>
+    </block>
+
+    <block wx:elif="{{currentCard}}">
+        <view class="card-stack">
+        <block wx:for="{{nextCards}}" wx:key="id">
+            <view class="card preview card-index-{{index + 1}}">
+            <view class="card-border-inner"></view>
+            </view>
+        </block>
+
+        <view
+            class="card active {{cardLeaving ? 'leave-' + cardLeaving : ''}} {{isDragging ? 'is-dragging' : ''}}"
+            style="transform: translate3d({{cardOffsetX}}px, {{cardOffsetY}}px, 0) rotate({{cardRotation}}deg);"
+            catchtouchstart="onCardTouchStart"
+            catchtouchmove="onCardTouchMove"
+            catchtouchend="onCardTouchEnd"
+            catchtouchcancel="onCardTouchEnd"
+        >
+            <view class="card-border-inner {{currentCard.densityClass}}">
+            <view class="flex-spacer"></view>
+            <!-- Header: Word & Phonetic -->
+            <view class="card-header">
+                <!-- Adaptive font size based on word length -->
+                <text class="big-word" style="font-size: {{currentCard.word.length > 10 ? '64rpx' : (currentCard.word.length > 7 ? '80rpx' : '108rpx')}}">{{currentCard.word}}</text>
+                <view class="phonetic-row" wx:if="{{currentCard.phonetic}}" data-action="pronunciation">
+                <text class="phonetic-capsule" data-action="pronunciation">🔊 /{{currentCard.phonetic}}/</text>
+                </view>
+            </view>
+
+            <view class="flex-spacer"></view>
+
+            <!-- Body: Definitions -->
+            <view class="card-body">
+                <view class="def-container">
+                <block wx:if="{{currentCard.cnDefs && currentCard.cnDefs.length > 0}}">
+                    <block wx:for="{{currentCard.cnDefs}}" wx:key="index" wx:for-item="def">
+                    <view class="def-row">
+                        <view class="pos-circle" wx:if="{{def.pos}}">{{def.pos}}</view>
+                        <text class="def-text" wx:if="{{def.meaningsText}}">{{def.meaningsText}}</text>
+                        <text class="def-text" wx:else>{{currentCard.translation}}</text>
+                    </view>
+                    </block>
+                </block>
+                <block wx:elif="{{currentCard.translation}}">
+                    <view class="def-row">
+
+                    <text class="def-text">{{currentCard.translation}}</text>
+                    </view>
+                </block>
+
+                <!-- Phrases Section (limited to 3) -->
+                <view class="phrase-section" wx:if="{{currentCard.phrases && currentCard.phrases.length > 0}}">
+                    <block wx:for="{{currentCard.phrases}}" wx:key="index" wx:if="{{index < 3}}">
+                    <view class="phrase-item">{{item}}</view>
+                    </block>
+                </view>
+                </view>
+            </view>
+            <view class="flex-spacer"></view>
+            </view>
+        </view>
+        </view>
+    </block>
+    
+    <!-- Completion View (Story or Summary) -->
+    <block wx:elif="{{uiState === 'complete'}}">
+        <!-- Story Mode: Immersive Reader -->
+        <block wx:if="{{activeStory && (activeStory.status === 'ongoing' || activeStory.status === 'completed')}}">
+            <story-reader 
+            id="storyReader"
+            story="{{activeStory}}" 
+            currentEpisode="{{storyDisplayEpisode}}"
+            mode="{{currentParagraphMode}}"
+            currentContent="{{session.paragraph}}"
+            words="{{session.words}}"
+            statusBarHeight="{{statusBarHeight}}"
+            aiFailed="{{aiFailed}}"
+            aiRetrying="{{aiRetrying}}"
+            episodeReady="{{episodeDraftStatus === 'ready'}}"
+            retryDisabled="{{episodeDraftRetryDisabled}}"
+            retryLabel="{{episodeDraftRetryLabel}}"
+            bind:back="handleStoryReturnHome"
+            bind:continue="handleStoryProceed"
+            bind:modeChange="handleParagraphModeChange"
+            bind:finish="handleFinishStoryCycle"
+            bind:retryAi="handleRetryAi"
+            />
+        </block>
+
+        <!-- Story bootstrapping fallback -->
+        <block wx:else>
+            <view class="story-sync-state">
+                <view class="spinner-retro"></view>
+                <text class="story-sync-title">正在恢复故事...</text>
+                <text class="story-sync-hint">本节内容准备好后会直接进入新故事页。</text>
+            </view>
+        </block>
+    </block>
+</view>

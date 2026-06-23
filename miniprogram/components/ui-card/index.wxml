@@ -1,0 +1,6 @@
+<view class="ui-card {{ full ? 'is-full' : '' }} custom-class">
+  <block wx:if="{{ title }}">
+    <view class="card-header text-h2">{{ title }}</view>
+  </block>
+  <slot></slot>
+</view>

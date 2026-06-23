@@ -1,0 +1,116 @@
+<view class="page settings-container anim-fade-in" style="padding-top: calc(88rpx + {{statusBarHeight}}px + 24rpx);">
+  <view class="page-header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="header-bar">
+      <view class="header-back" bindtap="onBack">
+        <text class="header-back-icon">‹</text>
+      </view>
+      <text class="header-title">设置</text>
+      <view class="header-spacer"></view>
+    </view>
+  </view>
+
+  <!-- Header / Profile with Avatar Picker -->
+  <view class="profile-header">
+    <!-- Avatar wrapper -->
+    <view class="avatar-wrapper">
+      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="avatar-lg" src="{{avatarUrl || '/images/avatar.png'}}" mode="aspectFill"></image>
+      </button>
+      <text class="avatar-hint">点击更换</text>
+    </view>
+    <!-- Info section -->
+    <view class="profile-info">
+      <input 
+        class="nickname-input" 
+        type="nickname" 
+        placeholder="点击设置昵称" 
+        value="{{nickName}}" 
+        bindinput="onNicknameInput"
+        bindblur="onNicknameBlur"
+      />
+
+    </view>
+  </view>
+
+
+
+  <!-- Settings Groups -->
+  <ui-card title="学习计划">
+    <view class="setting-item">
+      <view class="setting-label">
+        <text class="label-main">每日单词量</text>
+        <text class="label-value">{{testMode ? 1 : wordCount}}</text>
+      </view>
+      <slider 
+        min="{{wordCountMin}}" max="{{wordCountMax}}" step="{{wordCountStep}}" 
+        value="{{wordCount}}" 
+        activeColor="var(--success)" 
+        block-color="#6BCB77"
+        block-size="20" 
+        bindchange="onWordCountChange"
+        bindchanging="onWordCountChanging"
+        disabled="{{testMode}}"
+        show-value
+      />
+      <view class="slider-range">
+        <text>{{wordCountMin}}</text>
+        <text>{{wordCountMax}}</text>
+      </view>
+    </view>
+
+    <view class="setting-item">
+      <view class="setting-label">
+        <text class="label-main">故事生成模型</text>
+      </view>
+      <view class="model-pill">{{modelOptions[0].label}}</view>
+    </view>
+
+    <view class="setting-item">
+      <view class="setting-label">
+        <text class="label-main">单词排序</text>
+      </view>
+      <view class="order-tabs">
+        <block wx:for="{{orderOptions}}" wx:key="index">
+          <view 
+            class="order-tab {{orderIndex === index ? 'active' : ''}}" 
+            data-idx="{{index}}" 
+            bindtap="onOrderTab"
+          >
+            {{item}}
+          </view>
+        </block>
+      </view>
+      <view wx:if="{{orderIndex === 0 || orderIndex === 1}}" class="letter-picker">
+        <text class="letter-label">优先首字母</text>
+        <picker mode="selector" range="{{letters}}" value="{{letterIndex}}" bindchange="onLetterChange">
+          <view class="letter-pill">{{letters[letterIndex]}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- Review mode disabled for launch -->
+    <!-- <view class="setting-item">
+       <view class="setting-label">
+        <text class="label-main">默认复习模式</text>
+      </view>
+      <switch checked="{{reviewModeDefault}}" bindchange="onReviewModeSwitch" color="#6C5CE7"/>
+    </view> -->
+
+
+  </ui-card>
+
+  <ui-card title="开发者工具">
+    <view class="danger-header">
+      <text class="label-main">开发者重置</text>
+      <text class="danger-badge">仅测试</text>
+    </view>
+    <text class="danger-desc">清空学习与故事进度，仅用于开发调试。</text>
+    <view class="danger-action mb-0" bindtap="onResetData">
+      <text class="danger-action-text">重置学习数据</text>
+    </view>
+  </ui-card>
+
+  <view class="footer-area">
+    <view class="text-sm text-center text-sec">版本 1.0.0 • AI 驱动</view>
+  </view>
+</view>

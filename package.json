@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "lint": "node scripts/quality/lint.js",
+    "verify:docs": "node scripts/quality/validate-docs-consistency.js",
+    "verify:regression": "node scripts/quality/verify-regression.js",
+    "verify:rollout": "node scripts/quality/validate-rollout-playbook.js",
+    "smoke:userData": "node scripts/smoke/userData.js --selftest",
+    "smoke:storyData": "node scripts/smoke/storyData.js --selftest"
+  },
+  "devDependencies": {
+    "@cloudbase/cloudbase-mcp": "^2.8.0",
+    "@cloudbase/node-sdk": "3.16.0",
+    "ws": "^8.19.0"
+  },
+  "_notes": {
+    "public_build": "This is the public-showcase package.json. Eval pipeline scripts (verify:story-eval, dict:audit, smoke:remote*) and the underlying scripts/story-eval, scripts/dictionary directories are intentionally not published. See docs/eval-methodology.md for the methodology overview."
+  }
+}

@@ -1,0 +1,153 @@
+<view class="reader-container crt-screen" bindtap="onContainerTap">
+  <!-- HUD Header (仅完整故事页显示) -->
+  <view wx:if="{{isCycleCompleted}}" class="hud-header {{focusMode ? 'hidden' : ''}}" style="padding-top: {{statusBarHeight}}px; height: calc(52px + {{statusBarHeight}}px);">
+    <view class="hud-left" bindtap="onBack" hover-class="btn-hover">
+      <text class="pixel-text">BACK</text>
+    </view>
+  </view>
+
+  <!-- Hidden Canvas for Share Generation -->
+  <canvas type="2d" id="shareCanvas" style="width: 750rpx; height: 1200rpx; position: fixed; left: -9000px; top: -9000px;"></canvas>
+
+  <!-- 1. MODE: Normal Swiper (Episodes 1-7 before completion) -->
+  <swiper
+    wx:if="{{!isCycleCompleted}}"
+    class="fullscreen-swiper"
+    vertical="{{true}}"
+    current="{{swiperIndex}}"
+    bindchange="onSwiperChange"
+    duration="300"
+    style="padding-top: calc(52px + {{statusBarHeight}}px);"
+  >
+    <!-- Item 0: History Log -->
+    <swiper-item item-id="history" wx:if="{{currentEpisode > 1}}">
+      <scroll-view class="content-scroll" scroll-y scroll-anchoring="{{true}}" bindscroll="onScroll" throttle="{{false}}">
+        <view class="episode-stream" style="padding-top: 0">
+          <view wx:if="{{loadingHistory}}" class="loading-terminal result">
+             <view class="data-uplink-bar"><view class="data-uplink-progress"></view></view>
+             <text class="pixel-text" style="font-size: 10px; letter-spacing: 2px;">ESTABLISHING UPLINK<text class="blinking-cursor">_</text></text>
+          </view>
+          <view wx:if="{{!loadingHistory && historyError}}" class="history-error-container">
+             <text class="pixel-text error-text">{{mode === 'en' ? historyError.en : historyError.cn}}</text>
+             <button class="pixel-btn retry-btn" bindtap="loadHistory">RETRY</button>
+          </view>
+          <block wx:for="{{historyEpisodes}}" wx:key="episode">
+             <view class="episode-block">
+                <view class="ep-marker">#0{{item.episode}}</view>
+                <view class="episode-body serif-font">
+                   <template is="token-list" data="{{tokens: mode === 'en' ? item.tokensEn : item.tokensMixed}}"/>
+                </view>
+             </view>
+          </block>
+          <view class="footer-spacer"><text class="pixel-text text-dim">END OF LOG</text></view>
+        </view>
+      </scroll-view>
+    </swiper-item>
+
+    <!-- Item 1: Current Episode -->
+    <swiper-item item-id="current">
+      <scroll-view class="content-scroll" scroll-y scroll-anchoring="{{true}}" bindscroll="onScroll" throttle="{{false}}">
+        <view class="pull-hint-container" wx:if="{{currentEpisode > 1}}">
+           <view class="pull-hint-icon"></view>
+        </view>
+        <view class="episode-stream" style="padding-top: 15px">
+          <view class="episode-block data-inject">
+             <view class="episode-body serif-font">
+                <template is="token-list" data="{{tokens: mode === 'en' ? currentEpisodeContent.tokensEn : currentEpisodeContent.tokensMixed}}"/>
+             </view>
+             <view class="episode-actions">
+                <view class="episode-btn-row">
+                  <button class="pixel-btn secondary" hover-class="btn-hover" bindtap="onBack">退出</button>
+                  <button
+                    wx:if="{{!aiFailed && episodeReady && !isLastEpisode}}"
+                    class="pixel-btn"
+                    hover-class="btn-hover"
+                    bindtap="onContinue"
+                  >
+                    {{continueLabel}}
+                  </button>
+                  <button
+                    wx:elif="{{aiFailed}}"
+                    class="pixel-btn retry-btn {{(aiRetrying || retryDisabled) ? 'is-disabled' : ''}}"
+                    hover-class="btn-hover"
+                    bindtap="onRetryAi"
+                    disabled="{{aiRetrying || retryDisabled}}"
+                  >
+                    {{aiRetrying ? '重试中...' : retryLabel}}
+                  </button>
+                </view>
+                <text wx:if="{{aiFailed && !aiRetrying}}" class="pixel-text ai-retry-text">AI 生成失败</text>
+             </view>
+          </view>
+        </view>
+      </scroll-view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 2. MODE: Full Story Review (After Episode 7 completion) -->
+  <scroll-view
+    wx:else
+    class="full-story-scroll content-scroll"
+    scroll-y
+    scroll-with-animation
+    bindscroll="onScroll"
+    scroll-into-view="{{scrollIntoId}}"
+    style="padding-top: calc(52px + {{statusBarHeight}}px);"
+  >
+    <view class="episode-stream archive-view">
+        <block wx:for="{{historyEpisodes}}" wx:key="episode">
+            <view class="episode-block archive-block">
+                <view class="ep-marker">#0{{item.episode}}</view>
+                <view class="episode-body serif-font">
+                    <template is="token-list" data="{{tokens: mode === 'en' ? item.tokensEn : item.tokensMixed}}"/>
+                </view>
+            </view>
+        </block>
+        <view class="episode-block archive-block" id="ep-final">
+            <view class="ep-marker">#07</view>
+            <view class="episode-body serif-font">
+                <template is="token-list" data="{{tokens: mode === 'en' ? currentEpisodeContent.tokensEn : currentEpisodeContent.tokensMixed}}"/>
+            </view>
+            <view class="episode-actions">
+
+                <view wx:if="{{aiFailed}}" class="ai-retry-box">
+                  <text class="pixel-text ai-retry-text">AI 生成失败</text>
+                  <button class="pixel-btn retry-btn" hover-class="btn-hover" bindtap="onRetryAi" disabled="{{aiRetrying}}">
+                    {{aiRetrying ? '重试中...' : '再试一次'}}
+                  </button>
+                </view>
+            </view>
+        </view>
+    </view>
+  </scroll-view>
+
+  <!-- Tap-to-Peek Tooltip -->
+  <view class="bit-tooltip" wx:if="{{tooltip.visible}}" style="left:{{tooltip.x}}px; top:{{tooltip.y}}px;" catchtap="dismissTooltip">
+     <text>{{tooltip.text}}</text>
+  </view>
+
+  <!-- Share Card FAB -->
+  <view class="fab-share {{focusMode ? 'hidden' : ''}}" wx:if="{{isCycleCompleted}}" bindtap="onShare" hover-class="btn-hover">
+    <text class="pixel-text" style="font-size: 14px">分享</text>
+  </view>
+
+  <!-- Language Toggle FAB (Bottom Right) -->
+  <view class="fab-toggle {{focusMode ? 'hidden' : ''}}" bindtap="onToggleLanguage" hover-class="btn-hover">
+    <text class="pixel-text" style="font-size: 14px">{{mode === 'en' ? 'EN' : '中'}}</text>
+  </view>
+
+</view>
+
+<!-- Reusable Template for tokens -->
+<template name="token-list">
+  <block wx:for="{{tokens}}" wx:key="index">
+      <view wx:if="{{item.type === 'break'}}" class="token-break {{item.kind}}"></view>
+      <text
+        wx:else
+        class="token-text {{item.type === 'word' ? 'word' : ''}} {{item.isTarget ? 'highlight' : ''}}"
+        data-word="{{item.content}}"
+        data-def="{{item.definition}}"
+        catchtap="{{item.type === 'word' ? 'onTapWord' : ''}}"
+      >{{item.content}}</text>
+  </block>
+</template>

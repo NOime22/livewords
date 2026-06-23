@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "ui-button": "/components/ui-button/index"
+  },
+  "navigationBarTitleText": "LiveWords",
+  "navigationBarBackgroundColor": "#F8F9FA",
+  "navigationStyle": "custom"
+}

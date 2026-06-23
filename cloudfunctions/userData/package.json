@@ -1,0 +1,20 @@
+{
+  "name": "user-data",
+  "version": "1.0.0",
+  "description": "Cloud function for managing user vocabulary data",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "3.0.4"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,109 @@
+/** app.wxss **/
+
+/* --- MEMPHIS / NEO-BRUTALIST TOKENS --- */
+page {
+  /* Palette - Pop Art */
+  --bg-body: #FFFBF0;      /* Cream / Parchment */
+  --bg-card: #FFFFFF;
+  --text-main: #181818;    /* Jet Black */
+  --text-sec: #181818;     /* Keep text black for high contrast */
+  
+  --primary: #FFD93D;      /* Sunshine Yellow */
+  --secondary: #FF6B6B;    /* Hot Pink */
+  --accent: #4D96FF;       /* Electric Blue */
+  --success: #6BCB77;      /* Grass Green */
+  
+  --border-color: #181818;
+  --border-width: 4rpx;
+  
+  /* Hard Shadows (No Blur) */
+  --shadow-card: 8rpx 8rpx 0rpx #181818;
+  --shadow-btn: 6rpx 6rpx 0rpx #181818;
+  --shadow-sm: 4rpx 4rpx 0rpx #181818;
+  --shadow-float: 12rpx 12rpx 0rpx #181818;
+  --shadow-premium: 0 16rpx 48rpx rgba(0, 0, 0, 0.1);
+
+  /* Spacing & Radius */
+  --radius-sm: 8rpx;
+  --radius-md: 16rpx;
+  --radius-lg: 24rpx;
+  --radius-pill: 999px;
+  --space-unit: 8rpx;
+  --safe-area-bottom: env(safe-area-inset-bottom);
+
+  /* Typography */
+  --font-hero: 64rpx;
+  --font-h1: 44rpx;
+  --font-h2: 36rpx;
+  --font-body: 28rpx;
+  --font-sm: 24rpx;
+
+  /* Global Reset */
+  background: var(--bg-body);
+  color: var(--text-main);
+  font-family: 'PingFang SC', 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  font-weight: 500; /* Slightly bolder baseline */
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 32rpx;
+}
+
+/* --- UTILITY CLASSES --- */
+
+/* Text Utils */
+.text-hero { font-size: var(--font-hero); font-weight: 900; letter-spacing: -2rpx; text-transform: uppercase; }
+.text-h1 { font-size: var(--font-h1); font-weight: 800; letter-spacing: -1rpx; }
+.text-h2 { font-size: var(--font-h2); font-weight: 700; }
+.text-bold { font-weight: 700; }
+.text-sec { color: var(--text-sec); opacity: 0.7; }
+.text-center { text-align: center; }
+
+/* Flex Utils */
+.flex-row { display: flex; flex-direction: row; align-items: center; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-sm { gap: 16rpx; }
+.gap-md { gap: 32rpx; }
+
+/* Surface Utils */
+.card {
+  background: var(--bg-card);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 32rpx;
+  box-shadow: var(--shadow-card);
+}
+
+/* Button Utils */
+button {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  line-height: inherit;
+  border-radius: 0;
+}
+button::after { border: none; }
+
+/* Animations - Snappy */
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.anim-fade-in {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Hide Scrollbar */
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  color: transparent;
+}

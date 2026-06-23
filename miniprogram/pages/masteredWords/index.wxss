@@ -1,0 +1,238 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-body);
+  background-image: radial-gradient(var(--border-color) 2rpx, transparent 2rpx);
+  background-size: 40rpx 40rpx;
+}
+
+.page-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: transparent;
+}
+
+.header-bar {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18rpx;
+  background: transparent;
+}
+
+.header-back,
+.header-spacer {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-back-icon {
+  font-size: 56rpx;
+  line-height: 1;
+  color: #111;
+}
+
+.header-title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #111;
+}
+
+.mastered-scroll {
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 12rpx 18rpx 60rpx;
+}
+
+.mastered-content {
+  width: 100%;
+}
+
+.mastered-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin: 0 6rpx 18rpx;
+  padding: 20rpx 24rpx;
+  background: rgba(255, 255, 255, 0.88);
+  border: 3rpx solid rgba(34, 34, 34, 0.72);
+  box-shadow: 0 8rpx 0 rgba(34, 34, 34, 0.12);
+}
+
+.summary-copy {
+  min-width: 0;
+}
+
+.summary-title {
+  display: block;
+  font-size: 22rpx;
+  font-weight: 800;
+  color: #333;
+}
+
+.summary-subtitle {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 20rpx;
+  color: #777;
+}
+
+.summary-badge {
+  flex-shrink: 0;
+  min-width: 132rpx;
+  padding: 14rpx 18rpx 12rpx;
+  background: transparent;
+  color: #111;
+  text-align: center;
+}
+
+.summary-badge-value {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.summary-badge-label {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 18rpx;
+  letter-spacing: 1rpx;
+  opacity: 0.72;
+}
+
+.mastered-stack {
+  padding: 4rpx 0 96rpx;
+}
+
+.word-card {
+  position: relative;
+  margin-top: -70rpx;
+  min-height: 108rpx;
+  padding: 20rpx 28rpx 18rpx;
+  background: #fff;
+  border: 4rpx solid var(--border-color);
+  box-shadow: none;
+  transition: margin-top 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    min-height 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.word-card:first-child {
+  margin-top: 0;
+}
+
+.word-card.is-active {
+  transform: translateY(-18rpx);
+  margin-top: 8rpx;
+  min-height: 204rpx;
+}
+
+.word-card.is-after-active {
+  margin-top: -70rpx;
+  transform: translateY(112rpx);
+}
+
+.word-card.is-before-active {
+  transform: translateY(-4rpx);
+}
+
+.word-row-main {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  min-height: 58rpx;
+}
+
+.word-text {
+  font-size: 38rpx;
+  font-weight: 900;
+  color: #101010;
+  line-height: 1.1;
+}
+
+.word-phonetic {
+  font-size: 24rpx;
+  color: #6e685f;
+}
+
+.word-card-body {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-10rpx);
+  transition: max-height 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease,
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin-top 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.word-card-body.is-visible {
+  max-height: 240rpx;
+  opacity: 1;
+  margin-top: 12rpx;
+  transform: translateY(0);
+}
+
+.word-definition {
+  display: block;
+  font-size: 22rpx;
+  line-height: 1.65;
+  color: #5d564d;
+  padding-top: 14rpx;
+  border-top: 2rpx dashed rgba(255, 107, 0, 0.28);
+}
+
+.mastered-state {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+  padding: 32rpx;
+  box-sizing: border-box;
+}
+
+.state-icon {
+  font-size: 72rpx;
+}
+
+.state-text {
+  font-size: 26rpx;
+  color: #555;
+}
+
+.retry-btn {
+  margin-top: 12rpx;
+  padding: 16rpx 40rpx;
+  background: var(--primary);
+  border: 4rpx solid var(--border-color);
+  box-shadow: var(--shadow-btn);
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.spinner-retro {
+  width: 48rpx;
+  height: 48rpx;
+  border: 6rpx solid #FF6B00;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

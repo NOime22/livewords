@@ -1,0 +1,33 @@
+<view class="page">
+  <!-- Loading State -->
+  <view wx:if="{{loading}}" class="loading-state">
+    <view class="spinner-retro"></view>
+    <text class="loading-text">加载故事中...</text>
+  </view>
+
+  <!-- Error State -->
+  <view wx:elif="{{error}}" class="error-state">
+    <text class="error-icon">📭</text>
+    <text class="error-text">{{error}}</text>
+    <view class="error-btn" bindtap="loadStory">重试</view>
+  </view>
+
+  <!-- Story Reader (Full Archive Mode) -->
+  <story-reader
+    wx:elif="{{storyData}}"
+    id="storyReader"
+    story="{{storyData}}"
+    currentEpisode="{{storyData.currentEpisode}}"
+    mode="{{paragraphMode}}"
+    currentContent="{{currentContent}}"
+    words="{{words}}"
+    statusBarHeight="{{statusBarHeight}}"
+    isCycleCompleted="{{true}}"
+    aiFailed="{{false}}"
+    aiRetrying="{{false}}"
+    episodeReady="{{true}}"
+    retryDisabled="{{false}}"
+    retryLabel="再试一次"
+    bind:back="onBack"
+  />
+</view>

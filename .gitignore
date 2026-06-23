@@ -1,0 +1,55 @@
+# --- LiveWords public repo .gitignore ---
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / Editor local
+.vscode/
+.idea/
+.cursor/
+.kiro/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+
+# Local env & secrets — NEVER commit
+.env
+.env.*
+*.local
+
+# WeChat Mini Program local config
+project.private.config.json
+
+# Build outputs
+dist/
+build/
+
+# Scratch / temp
+.tmp-*
+*.log
+artifacts/
+data/
+日志临时站/
+
+# Private engineering assets (not in showcase)
+.agent/
+.sisyphus/
+.mcp.json
+PROMPTS.md
+scripts/dictionary/
+scripts/story-eval/
+scripts/books_json/
+cloudfunctions/storyDataEval/
+cloudfunctions/storyEvalNode16/
+cloudfunctions/storyEvalStage/
+docs/superpowers/
+docs/history/
+docs/legacy/
+specs/
+simulation/

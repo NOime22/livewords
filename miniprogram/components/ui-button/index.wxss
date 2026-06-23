@@ -1,0 +1,111 @@
+/* components/ui-button/index.wxss */
+.ui-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-weight: 800; /* Extra bold */
+  text-transform: uppercase;
+  letter-spacing: 1rpx;
+  border-radius: var(--radius-md); /* Less rounded, more blocky */
+  border: var(--border-width) solid var(--border-color);
+  transition: all 0.1s ease; /* Fast transition for click feel */
+  font-size: var(--font-body);
+  overflow: visible; /* Allow shadow to be seen clearly */
+  margin: 0; /* Reset default margin */
+}
+
+.ui-btn::after { border: none; }
+
+/* Types */
+.btn-primary {
+  background: var(--primary); /* Yellow */
+  color: var(--text-main);
+  box-shadow: var(--shadow-btn);
+}
+
+.btn-secondary, .btn-default {
+  background: #fff;
+  color: var(--text-main);
+  box-shadow: var(--shadow-btn);
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--text-main);
+  border-color: transparent;
+  box-shadow: none;
+  text-decoration: underline;
+  text-underline-offset: 4rpx;
+}
+
+.btn-danger {
+  background: #FF6B6B;
+  color: #fff;
+  box-shadow: var(--shadow-btn);
+}
+
+/* Hover/Active States (Physical Click) */
+.btn-hover {
+  transform: translate(6rpx, 6rpx);
+  box-shadow: none; /* Shadow disappears = button pressed into surface */
+}
+
+.btn-text.btn-hover {
+  transform: scale(0.95);
+  box-shadow: none;
+}
+
+/* Sizes */
+.size-normal {
+  height: 96rpx; /* Taller touch target */
+  padding: 0 48rpx;
+  font-size: 30rpx;
+}
+
+.size-large {
+  height: 112rpx;
+  padding: 0 64rpx;
+  font-size: 36rpx;
+}
+
+.size-small {
+  height: 72rpx;
+  padding: 0 32rpx;
+  font-size: 24rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Modifiers */
+.is-block {
+  display: flex;
+  width: 100%;
+}
+
+.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  background: #e0e0e0;
+  box-shadow: none;
+  transform: translate(4rpx, 4rpx);
+}
+
+/* Loading */
+.btn-content.is-loading {
+  opacity: 0;
+}
+
+.loading-spinner {
+  position: absolute;
+  width: 32rpx;
+  height: 32rpx;
+  border: 4rpx solid var(--text-main);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
