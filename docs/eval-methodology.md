@@ -1,5 +1,84 @@
 # 📊 Eval Methodology · 评估驱动调优
 
+> 🌐 [English Summary](#english-summary) · [中文全文](#中文全文)
+
+---
+
+<a id="english-summary"></a>
+
+## 🇬🇧 English Summary
+
+> *"I tweaked the prompt and it feels better."* — that's not engineering, that's astrology.
+
+LiveWords answers *"which prompt / which model / which parameters are better"* with a real measurement pipeline, not vibes.
+
+### Core philosophy: Eval-Driven Development
+
+LLM content products live with a structural tension:
+- LLM outputs are stochastic — the same prompt produces different results
+- Users need a stable quality floor — one bad episode loses retention
+- Changing a prompt is easy — but each tweak introduces new failure modes
+
+**Our answer**: treat every prompt change as a software change. Run the full eval suite before shipping.
+
+### The evaluation pipeline (overview)
+
+```
+1. Maintain a golden test set (cases.json)
+   covering different vibes, CEFR levels, wordpacks, edge cases
+            ↓
+2. Define Rubric v2 — multi-dimensional scoring
+   (word coverage / continuity / cliffhanger strength / mixed-token compliance / …)
+            ↓
+3. For each case, run param-sweep — current prompt × N parameter sets × M generations
+            ↓
+4. Score each generation via evaluator (LLM-as-judge + rule-based validators)
+            ↓
+5. Aggregate, compare to baseline, decide ship/no-ship
+```
+
+### What's measured
+
+| Signal | Why it matters |
+|---|---|
+| **Word coverage** | Did every target word appear naturally in the story? |
+| **Continuity** | Did Episode N+1 actually pick up Episode N's threads? |
+| **Cliffhanger strength** | Is the ending hooky or limp? |
+| **Mixed-token compliance** | Does mixed prose obey the validator rules? |
+| **State utility** | Does the state digest actually help next-episode generation? |
+| **Word count** | Within the configured target range? |
+
+### Observability: `promptMeta`
+
+Each generation persists:
+```js
+{
+  systemPromptSha1: "abc123...",  // prompt version (hash only)
+  userPromptSha1: "def456...",
+  flowOk: true,
+  missingEpisodes: [],
+  mismatchReasons: [],
+  contextFlags: { protagonistMode: true, branchSelected: "A" },
+  repairApplied: false,
+  attempts: 1
+}
+```
+
+This is the **single most valuable artifact** for debugging quality regressions — every shipped episode is causally traceable to its prompt version.
+
+### Why the eval pipeline isn't open-sourced
+
+The full `scripts/story-eval/` pipeline (rubric definitions, case curation, scoring chains, parameter strategies) **is LiveWords' core commercial asset**. We share the methodology and the observability schema, but not the playbook.
+
+→ For runtime contracts, read [`architecture.md`](architecture.md)
+→ For story engine details, read [`story-engine.md`](story-engine.md)
+
+---
+
+<a id="中文全文"></a>
+
+## 🇨🇳 中文全文
+
 > "我换了个 prompt，感觉好像好一点了。"
 >
 > ——这不是工程，这是占星。

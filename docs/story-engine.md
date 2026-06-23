@@ -1,5 +1,78 @@
 # 🎬 Story Engine · 故事引擎设计
 
+> 🌐 [English Summary](#english-summary) · [中文全文](#中文全文)
+
+---
+
+<a id="english-summary"></a>
+
+## 🇬🇧 English Summary
+
+The story engine is **the core "magic"** of LiveWords — turning a vocabulary list into a 7-episode English mini-drama. This document explains *how* (without leaking prompt internals).
+
+### Product contract: the 7-episode structure
+
+```
+Ep 1  →  Opening + cliffhanger (must use words[1])
+Ep 2  →  Resolves Ep.1 hook + new action + cliffhanger
+Ep 3  →  Build-up
+Ep 4  →  🎲 Midweek branching choice — once chosen, locked forever
+Ep 5  →  Proceeds along chosen branch
+Ep 6  →  Approaches resolution, cliffhanger
+Ep 7  →  🎬 Finale: climax + resolution + epilogue (no rushed endings)
+```
+
+### The single-episode generation pipeline
+
+```
+Input: words[N] + vibe + prior-episode digest + protagonist
+   ↓
+1. Build prompt (private template) with deterministic context injection
+   ↓
+2. Call LLM (Hunyuan default; DeepSeek as alternate)
+   ↓
+3. Parse & validate output (structured JSON: title, contentEn, contentMixed, state)
+   ↓
+4. Run validators:
+   • All target words present?
+   • Mixed paragraph token rules satisfied?
+   • Word count in range?
+   • Continuity signals intact?
+   ↓
+5. If any validator fails → run repair pass ONCE
+   ↓
+6. Persist to story_episode_drafts with full promptMeta (sha1, flags, mismatchReasons)
+```
+
+### Chinese-English mixed prose: strict token validation
+
+The `paragraph.mixed` field must satisfy:
+- ✅ Every target word must appear in English (even when embedded in Chinese phrases)
+- ❌ No other English content words (no leaked English nouns, verbs, adjectives)
+- ✅ Only a tiny allowlist of function words permitted
+- ✅ English tokens must have whitespace boundaries
+
+Validator is server-side — failure triggers automatic repair before marking the draft failed.
+
+### Observability: `promptMeta`
+
+Every generation persists a `promptMeta` record with:
+- `systemPromptSha1` / `userPromptSha1` — prompt versioning (hashes, not contents)
+- `flowOk`, `missingEpisodes`, `mismatchReasons` — quality signals
+- `contextFlags.protagonistMode`, `contextFlags.branchSelected` — runtime context
+- `attempts`, `repairApplied` — repair pipeline trace
+
+This makes every failure debuggable end-to-end.
+
+→ For evaluation methodology, read [`eval-methodology.md`](eval-methodology.md)
+→ For runtime contracts, read [`architecture.md`](architecture.md)
+
+---
+
+<a id="中文全文"></a>
+
+## 🇨🇳 中文全文
+
 > LiveWords 最核心的"魔法"——把一个词表，变成 7 集英文连续剧。
 >
 > 这份文档讲**这个魔法是怎么做到的**（不含 prompt 原文，但讲清流程、契约与工程难题）。

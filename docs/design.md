@@ -1,5 +1,75 @@
 # 🎨 Design · UI/UX 设计
 
+> 🌐 [English Summary](#english-summary) · [中文全文](#中文全文)
+
+---
+
+<a id="english-summary"></a>
+
+## 🇬🇧 English Summary
+
+> *"A learning app doesn't have to look like a learning app."*
+
+LiveWords' visual identity is **the anti-"cyberpunk learning app"** — bright, airy, generous whitespace, premium feel. It reads more like a lifestyle product than a study tool.
+
+Full spec: [`design/LIVEWORDS_UI_DESIGN.md`](design/LIVEWORDS_UI_DESIGN.md).
+
+### Design goals
+
+| Goal | What it means |
+|---|---|
+| **Bright & uplifting** | Light backgrounds, fresh accents, generous whitespace — no dark/neon/cyber aesthetic |
+| **Minimal & calm** | Few elements per screen, clear hierarchy, no dense ornament |
+| **Short learning path** | 1-2 taps to core on first-run, 1 tap on return |
+| **Discoverable interactions** | Key actions are visible buttons; gestures are *enhancements*, not primary |
+| **System consistency** | Shared components reused across pages (cards, chips, sliders, tabs) |
+| **WeChat-native** | Only `view`, `text`, `image`, `button`, `scroll-view`, `swiper`, basic transitions |
+
+### Visual language
+
+**Backgrounds**
+- `BG/Main`: very light warm gray / near-white (`#F6F7FB`)
+- `BG/Card`: pure white (`#FFFFFF`)
+- `BG/Overlay`: 92-96% opaque white over blurred background
+
+**Primary palette**
+- **`Primary`**: teal `#23C4C9` — main CTA, active state
+- `Primary Soft`: pale teal `#E1F8F9` — subtle highlights
+
+**Secondary palette**
+- `Secondary`: sky blue `#4C8DFF` — secondary CTA, progress, links
+- `Highlight`: soft coral `#FF7A6E` — emphasis, streak badges
+
+**Neutrals**
+- `Text/Primary`: deep slate `#1E2433`
+- `Text/Secondary`: mid gray `#6E7484`
+- `Border/Light`: `#E1E4EC`
+
+**Semantic**
+- `Success`: soft green `#37C985` · `Warning`: amber `#FFC857` · `Error`: red `#F45B5B`
+
+### Core interactions
+
+- **Card-based home** — story progress at a glance, no nested navigation
+- **Story reader** — full-screen immersive, swipe between paragraphs
+- **Word interactions** — long-press for definition; tap to mark as known
+- **Settings panel** — one screen, no tabs, no nested menus
+
+### Design principles
+
+1. **Discoverable over clever** — visible buttons beat hidden gestures
+2. **Calm over busy** — let breathing room do the design work
+3. **System over one-offs** — shared components, no page-specific styles
+4. **Performance is design** — slow == ugly
+
+→ For runtime architecture, read [`architecture.md`](architecture.md)
+
+---
+
+<a id="中文全文"></a>
+
+## 🇨🇳 中文全文
+
 > "学习应用不一定要长得像学习应用。"
 >
 > LiveWords 在视觉上反"赛博朋克学习应用"路线，走的是**轻盈、明亮、留白、高级**——更接近一款生活方式 APP。

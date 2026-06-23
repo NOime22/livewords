@@ -1,4 +1,39 @@
-# LiveWords · 架构总览
+# LiveWords · Architecture Overview · 架构总览
+
+> 🌐 [English Summary](#english-summary) · [中文全文](#中文全文)
+
+---
+
+<a id="english-summary"></a>
+
+## 🇬🇧 English Summary
+
+LiveWords is a WeChat mini program built on **Tencent CloudBase**, structured in three tiers:
+
+- **Frontend** — WeChat mini program (`miniprogram/`): 7 pages, 3 components, local cache, sync queue
+- **Backend** — 3 cloud functions (`cloudfunctions/`): `userData`, `storyData`, `fetchStory`
+- **Storage** — CloudBase NoSQL with 8 collections (users, words, story drafts, retry queue, ops log, archive, generation logs)
+- **AI** — Tencent Hunyuan (default) + DeepSeek for episode generation
+
+### Six runtime contracts that distinguish LiveWords from a "toy demo":
+
+1. **Idempotent writes (`operationId`)** — retry-prone mutations dedupe so the same episode is never generated twice on network retry
+2. **Optimistic concurrency (`expectedRev` + `REV_CONFLICT`)** — stale revisions are rejected, protecting state when users learn on two devices at once
+3. **Retain-and-mark expiry + bounded revival** — expired stories are kept and can be revived once, instead of being deleted
+4. **Protagonist Mode** — deterministic protagonist injection (`cycle → users.nickName → fallback`) recorded in `promptMeta` for observability
+5. **Immutable mid-week branching** — Episode 4 branch choice is permanent; conflicting resubmission returns `BRANCH_IMMUTABLE`
+6. **Admin-gated eval & retry paths** — `devOpenid` and retry-queue processing require explicit HMAC `adminAuth`; never exposed to user requests
+
+Full field-level contract spec lives in [`CURRENT_ARCHITECTURE.md`](CURRENT_ARCHITECTURE.md).
+
+→ For the story engine details, read [`story-engine.md`](story-engine.md)
+→ For the evaluation methodology, read [`eval-methodology.md`](eval-methodology.md)
+
+---
+
+<a id="中文全文"></a>
+
+## 🇨🇳 中文全文
 
 > 这份文档是 LiveWords 系统的**完整运行时契约说明**——既是工程团队的 source of truth，也是给外部读者的"看一眼就懂这个项目在做什么、用什么方式做"的全景图。
 
